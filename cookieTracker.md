@@ -1,11 +1,8 @@
 关于cookie的控制
 ---
 ###cookie整理
-1. 统计1/100用户的cookie使用情况，用户进入时，请求一个静态图片，带上cookie信息，统计时间大概是一周左右。
-2. 整理统计数据，需要这么几个量：
-	- 无区分的cookie使用量情况，就是不根据用户做唯一性处理，不论一个用户请求多少次，都计算在内。计算出全站cookie使用量的总体情况。
-	- 用户cookie使用量情况，每个用户只记录一次，以用户作为区分度，计算在用户群众，被使用最多的cookie是哪些。
-	- 统计单次回话cookie和持久cookie的量
+1. 统计1/100用户的cookie使用情况，用户进入时，发起一个请求，带上cookie信息，统计时间大概是一周左右。
+2. 整理统计数据,以``uid``作为``key``，统计每个用户所用到的cookie
 3. 对cookie进行分类，区分出``用户权限相关cookie``和``样式相关cookie``还有``失效cookie``
 4. 咨询各业务部门，统计各业务部门对于cookie的需求
 5. 对于相似功能的cookie，可以进行合并
@@ -14,6 +11,26 @@
 ###剩余问题：
 1. 对于操作过程中通过js写入的cookie怎么统计
 2. ``dajie.com``下的资源，怎么获取到``job.dajie.com``下的cookie
+
+###问题解决方案
+1. 修改``$.cookie``插件，在每次修改cookie的时候都发出一个请求，用于统计cookie
+2. 不同domain下存放不同的相应请求，目前可见的几个domain有：
+	- www.dajie.com
+	- job.dajie.com
+	- cu.dajie.com
+	- fnma.dajie.com
+	- xo.dajie.com
+	- campus.dajie.com
+	- company.dajie.com
+	- zhuanti.dajie.com
+	- ats.dajie.com
+	- 公司频道各个付费公司…
+3. 可以预见的是，订制类的公司频道用到的一些cookie应该都是``dajie.com``这个domain中的
+
+###cookie的自动检测
+1. 还是在``$.cookie``上做改进，在上线之后，对``1/1000``的用户进行cookie统计。每次统计的cookie都要与白名单中的cookie进行对比，每天统计一次，发现不在白名单内的cookie，整理之后发送邮件给相关人进行确认。
+2. 在预发布测试的过程中，cookie的检测要拓展到``100/100``的用户。
+
 
 ###插件控制：
 1. cookieTracker插件，检测页面中所有的cookie，并与白名单中的cookie做对比，对于白名单中没有的cookie，标红提示。
@@ -33,6 +50,8 @@
 				{
 					"name" : "cookie name",
 					"domain" : "cookie要作用的域",
+					"path" : "cookie左右的路径",
+					"expir" : "cookie的持续时间",
 					"intro" : "关于该cookie的描述",
 					"editer" : "添加这个cookie的人"
 				}
