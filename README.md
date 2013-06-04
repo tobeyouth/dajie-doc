@@ -2,4 +2,7 @@
 
 
 
-目前什么都没有
+1. cookieTracker - 检测cookie的方法
+2. paging - 生成页脚的方法
+3. searchMode - 一个提供``更新数据``-->``刷新模版``功能的方法
+
